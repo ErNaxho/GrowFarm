@@ -1,9 +1,12 @@
-package xyz.elnaxho.sneakgrow;
+package xyz.elnaxho.growfarm;
 
 import org.bukkit.Location;
 import org.bukkit.World;
 import org.bukkit.block.Block;
 
+import java.util.ArrayList;
+import java.util.Comparator;
+import java.util.List;
 import java.util.function.Consumer;
 
 /**
@@ -14,6 +17,14 @@ import java.util.function.Consumer;
  *             always including the center block.
  * Area has no hardcoded maximum - server owners are responsible for picking
  * sane values in config.yml since huge areas scale O(n^3).
+ *
+ * Blocks are visited NEAREST-FIRST (sorted by distance from center). This
+ * matters whenever a requirement consumes a limited resource (bone meal,
+ * hoe durability, custom items): with a large area and a scarce resource,
+ * visiting blocks in arbitrary order could exhaust that resource on distant
+ * blocks before ever reaching the block the player is actually standing on.
+ * Nearest-first guarantees the player's own tile always gets first claim on
+ * whatever they're carrying.
  */
 public final class AreaUtil {
 
@@ -32,6 +43,7 @@ public final class AreaUtil {
         int cy = center.getBlockY();
         int cz = center.getBlockZ();
 
+        List<int[]> offsets = new ArrayList<>();
         for (int dx = -radius; dx <= radius; dx++) {
             int dxSquared = dx * dx;
             for (int dy = -radius; dy <= radius; dy++) {
@@ -40,12 +52,19 @@ public final class AreaUtil {
                     continue;
                 }
                 for (int dz = -radius; dz <= radius; dz++) {
-                    if (dxdySquared + dz * dz > radiusSquared) {
+                    int distSquared = dxdySquared + dz * dz;
+                    if (distSquared > radiusSquared) {
                         continue;
                     }
-                    consumer.accept(world.getBlockAt(cx + dx, cy + dy, cz + dz));
+                    offsets.add(new int[]{dx, dy, dz, distSquared});
                 }
             }
+        }
+
+        offsets.sort(Comparator.comparingInt(offset -> offset[3]));
+
+        for (int[] offset : offsets) {
+            consumer.accept(world.getBlockAt(cx + offset[0], cy + offset[1], cz + offset[2]));
         }
     }
 }

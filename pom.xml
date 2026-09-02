@@ -5,10 +5,10 @@
     <modelVersion>4.0.0</modelVersion>
 
     <groupId>xyz.elnaxho</groupId>
-    <artifactId>sneakgrow</artifactId>
-    <version>2.0.0</version>
+    <artifactId>growfarm</artifactId>
+    <version>1.0.0</version>
     <packaging>jar</packaging>
-    <name>SneakGrow</name>
+    <name>GrowFarm</name>
 
     <properties>
         <maven.compiler.source>17</maven.compiler.source>

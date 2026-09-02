@@ -1,18 +1,18 @@
-package xyz.elnaxho.sneakgrow;
+package xyz.elnaxho.growfarm;
 
 import org.bukkit.plugin.java.JavaPlugin;
 
 /**
  * Thin wrapper around the plugin logger that only prints when
  * {@code debug: true} is set in config.yml. Every message is prefixed with
- * "[SneakGrow Debug]" so it is easy to filter in console/log files.
+ * "[GrowFarm Debug]" so it is easy to filter in console/log files.
  *
  * Callers should only log meaningful, non-spammy events (see SKILL usage in
  * GrowListener / PlantListener) - this class intentionally does not rate
  * limit itself, that responsibility belongs to the caller.
  */
 public final class DebugLogger {
-    private static final String PREFIX = "[SneakGrow Debug] ";
+    private static final String PREFIX = "[GrowFarm Debug] ";
 
     private final JavaPlugin plugin;
     private final ConfigManager config;

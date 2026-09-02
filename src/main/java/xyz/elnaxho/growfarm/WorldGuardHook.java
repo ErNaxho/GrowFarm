@@ -1,4 +1,4 @@
-package xyz.elnaxho.sneakgrow;
+package xyz.elnaxho.growfarm;
 
 import com.sk89q.worldedit.bukkit.BukkitAdapter;
 import com.sk89q.worldguard.WorldGuard;
@@ -21,7 +21,7 @@ import org.bukkit.plugin.Plugin;
  * before WorldGuard locks its flag registry during its own onEnable().
  * The rest of this class is safe to use at any time after that.
  */
-public final class WorldGuardHook {
+public final class WorldGuardHook implements RegionGuard {
     private static StateFlag autoGrowFlag;
     private static StateFlag autoPlantFlag;
     private static boolean registrationAttempted = false;
@@ -68,14 +68,17 @@ public final class WorldGuardHook {
         this.active = present && autoGrowFlag != null && autoPlantFlag != null;
     }
 
+    @Override
     public boolean isActive() {
         return active;
     }
 
+    @Override
     public boolean isAutoGrowAllowed(Location location) {
         return isAllowed(location, autoGrowFlag);
     }
 
+    @Override
     public boolean isAutoPlantAllowed(Location location) {
         return isAllowed(location, autoPlantFlag);
     }

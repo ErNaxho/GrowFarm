@@ -1,4 +1,4 @@
-package xyz.elnaxho.sneakgrow;
+package xyz.elnaxho.growfarm;
 
 import org.bukkit.Location;
 import org.bukkit.Material;
@@ -19,6 +19,10 @@ import java.util.Set;
  * moves. Consumes items from the player's inventory normally (no
  * duplication) and only plants where there is air above and the player
  * actually has the required item, respecting survival mechanics.
+ *
+ * Plantable blocks are determined by the hierarchical config:
+ * - Farmland crops and seeds come from farmlands.autoplant
+ * - Soul sand crops and seeds come from netherland.autoplant
  */
 public final class PlantListener implements Listener {
     private static final Set<Material> FARMLAND_TYPES = Set.of(Material.FARMLAND);
@@ -26,10 +30,10 @@ public final class PlantListener implements Listener {
 
     private final ConfigManager config;
     private final PlayerFeatureState state;
-    private final WorldGuardHook worldGuard;
+    private final RegionGuard worldGuard;
     private final DebugLogger debug;
 
-    public PlantListener(ConfigManager config, PlayerFeatureState state, WorldGuardHook worldGuard, DebugLogger debug) {
+    public PlantListener(ConfigManager config, PlayerFeatureState state, RegionGuard worldGuard, DebugLogger debug) {
         this.config = config;
         this.state = state;
         this.worldGuard = worldGuard;
@@ -60,20 +64,25 @@ public final class PlantListener implements Listener {
 
         debug.log(player.getName() + " triggered AutoPlant.");
         PlayerInventory inventory = player.getInventory();
-        int area = config.getAutoPlantArea();
 
-        AreaUtil.forEachInArea(to, area, block -> tryPlant(player, inventory, block));
-    }
-
-    private void tryPlant(Player player, PlayerInventory inventory, Block soilBlock) {
-        Material soilType = soilBlock.getType();
-
-        if (config.isAutoPlantFarmlandEnabled() && FARMLAND_TYPES.contains(soilType)) {
-            plantFromCandidates(player, inventory, soilBlock, config.getFarmlandSeeds());
-            return;
+        // Farmlands planting
+        if (config.isFarmlandsEnabled() && config.isFarmlandPlantEnabled()) {
+            int farmlandArea = config.getFarmlandPlantArea();
+            AreaUtil.forEachInArea(to, farmlandArea, block -> {
+                if (FARMLAND_TYPES.contains(block.getType())) {
+                    plantFromCandidates(player, inventory, block, config.getFarmlandSeeds());
+                }
+            });
         }
-        if (config.isAutoPlantSoulSandEnabled() && SOUL_SAND_TYPES.contains(soilType)) {
-            plantFromCandidates(player, inventory, soilBlock, config.getSoulSandSeeds());
+
+        // Netherland planting
+        if (config.isNetherlandEnabled() && config.isNetherlandPlantEnabled()) {
+            int netherlandArea = config.getNetherlandPlantArea();
+            AreaUtil.forEachInArea(to, netherlandArea, block -> {
+                if (SOUL_SAND_TYPES.contains(block.getType())) {
+                    plantFromCandidates(player, inventory, block, config.getNetherlandSeeds());
+                }
+            });
         }
     }
 
@@ -85,7 +94,9 @@ public final class PlantListener implements Listener {
 
         for (Material seed : candidates) {
             int slot = inventory.first(seed);
-            if (slot < 0) {
+            ItemStack offHandStack = inventory.getItemInOffHand();
+            boolean inOffHandOnly = slot < 0 && offHandStack != null && offHandStack.getType() == seed;
+            if (slot < 0 && !inOffHandOnly) {
                 continue;
             }
             Material plantMaterial = seedToPlant(seed);
@@ -99,7 +110,11 @@ public final class PlantListener implements Listener {
                 above.setBlockData(ageable, true);
             }
 
-            consumeOne(inventory, slot);
+            if (slot >= 0) {
+                consumeOne(inventory, slot);
+            } else {
+                consumeOffHandOne(inventory);
+            }
             debug.log("Planted " + plantMaterial + " at " + describe(above.getLocation())
                     + " for " + player.getName());
             return;
@@ -141,7 +156,22 @@ public final class PlantListener implements Listener {
         }
     }
 
+    private void consumeOffHandOne(PlayerInventory inventory) {
+        ItemStack stack = inventory.getItemInOffHand();
+        if (stack == null) {
+            return;
+        }
+        int amount = stack.getAmount() - 1;
+        if (amount <= 0) {
+            inventory.setItemInOffHand(null);
+        } else {
+            stack.setAmount(amount);
+            inventory.setItemInOffHand(stack);
+        }
+    }
+
     private String describe(Location location) {
         return location.getBlockX() + "," + location.getBlockY() + "," + location.getBlockZ();
     }
+
 }

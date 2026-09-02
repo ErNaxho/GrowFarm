@@ -1,0 +1,184 @@
+# SneakGrow configuration
+
+  #########################
+  ## Dependencies support
+  #########################
+
+worldguard:
+  # When true (and WorldGuard is installed), the custom "autogrow" and
+  # "autoplant" region flags are respected. Set to false to ignore
+  # WorldGuard entirely even if it's installed.
+  enabled: true
+
+luckperms:
+  # When true (and LuckPerms is installed), SneakGrow will use LuckPerms to check for permissions.
+  enabled: true
+
+  ########################
+  ## Crops configuration
+  ########################
+
+  #####################
+  ## Farmlands config
+  #####################
+
+farmlands:
+  # When true, SneakGrow will use Farmlands to check for permissions.
+  autogrow:
+    # Area around the player that is scanned for growable blocks.
+    # 1 = only the block the player is standing on.
+    # N = a sphere of radius (N - 1) blocks around the player. No hard cap.
+    area: 4
+
+    # Percentage (0-100) chance each eligible block grows per trigger.
+    # If percentage is set to 0, the crops will never grow
+    growth-chance: 50
+
+    # If true, crops advance by exactly one growth stage per trigger.
+    # If false, crops jump straight to their maximum growth stage.
+    stage-growing: true
+
+    # If true, the player must have bone meal in their inventory for AutoGrow
+    # to work at all; one bone meal is consumed per trigger that grows anything.
+    bone-meal-use: true
+
+    # If true, the player must be holding (or carrying) a hoe for AutoGrow to work.
+    hoe-use: false
+
+    custom-item-use: false
+
+    custom-item-list: {
+      BONE_MEAL, GOLD_ORE
+    }
+
+    crops:
+      WHEAT: true
+      CARROTS: true
+      POTATOES: true
+      BEETROOTS: true
+      NETHER_WART: true
+      SUGAR_CANE: true
+      COCOA: true
+      MELON_STEM: true
+      PUMPKIN_STEM: true
+      ATTACHED_MELON_STEM: true
+      ATTACHED_PUMPKIN_STEM: true
+      PITCHER_CROP: true
+      TORCHFLOWER_CROP: true
+      BAMBOO: true
+
+
+  autoplant:
+    # Area around the player that is scanned for plantable soil.
+    area: 4
+
+    plant: true
+
+    farmland-seeds:
+      - WHEAT_SEEDS
+      - BEETROOT_SEEDS
+      - CARROT
+      - POTATO
+      - PITCHER_POD
+      - TORCHFLOWER_SEEDS
+  
+  ######################
+  ## Netherland config
+  ######################
+  
+  netherland:
+  # When true, SneakGrow will use Farmlands to check for permissions.
+  autogrow:
+    # Area around the player that is scanned for growable blocks.
+    # 1 = only the block the player is standing on.
+    # N = a sphere of radius (N - 1) blocks around the player. No hard cap.
+    area: 4
+
+    # Percentage (0-100) chance each eligible block grows per trigger.
+    # If percentage is set to 0, the crops will never grow
+    growth-chance: 50
+
+    # If true, crops advance by exactly one growth stage per trigger.
+    # If false, crops jump straight to their maximum growth stage.
+    stage-growing: true
+
+    # If true, the player must have bone meal in their inventory for AutoGrow
+    # to work at all; one bone meal is consumed per trigger that grows anything.
+    bone-meal-use: false
+
+    # If true, the player must be holding (or carrying) a hoe for AutoGrow to work.
+    hoe-use: false
+
+    custom-item-use: false
+
+    custom-item-list: {
+      BONE_MEAL, GOLD_ORE
+    }
+
+    autoplant:
+      # Area around the player that is scanned for plantable soil.
+      area: 4
+
+      plant: true
+
+      soul-sand-seeds:
+        - NETHER_WART
+
+
+  ###########################
+  ## Saplings configuration
+  ###########################
+saplings:
+    # Percentage (0-100) chance each eligible block grows per trigger.
+    # If percentage is set to 0, the crops will never grow
+    growth-chance: 50
+
+    # If true, crops advance by exactly one growth stage per trigger.
+    # If false, crops jump straight to their maximum growth stage.
+    instant-grow: true
+
+    # If true, the player must have bone meal in their inventory for AutoGrow
+    # to work at all; one bone meal is consumed per trigger that grows anything.
+    bone-meal-use: false
+
+    # If true, the player must be holding (or carrying) a hoe for AutoGrow to work.
+    hoe-use: false
+
+    custom-item-use: false
+
+    custom-item-list: {
+      BONE_MEAL, GOLD_ORE
+    }
+
+    SAPLINGS:
+      OAK: true
+      SPRUCE: true
+      BIRCH: true
+      JUNGLE: true
+      ACACIA: true
+      DARK_OAK: true
+      CHERRY: true
+      MANGROVE: true
+
+  ###########################
+  ## Messages Configuration
+  ###########################
+
+messages:
+  no-bone-meal: "&cYou don't have bone meal to grow the crops."
+  no-hoe: "&cYou need a hoe to grow the crops."
+  grow-both-on: "&aAutoGrow enabled (Sneak + Move)."
+  grow-both-off: "&cAutoGrow disabled (Sneak + Move)."
+  grow-sneak-on: "&aSneak Grow enabled."
+  grow-sneak-off: "&cSneak Grow disabled."
+  grow-move-on: "&aMove Grow enabled."
+  grow-move-off: "&cMove Grow disabled."
+  plant-on: "&aAutoPlant enabled."
+  plant-off: "&cAutoPlant disabled."
+  reload-success: "&aConfiguration reloaded successfully."
+  no-permission: "&cYou don't have permission to do this."
+  players-only: "&cThis command can only be used by a player."
+
+# When true, prints detailed debug information to console prefixed with
+# "[SneakGrow Debug]". Keep this false on production servers.
+debug: false

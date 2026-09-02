@@ -1,4 +1,4 @@
-package xyz.elnaxho.sneakgrow;
+package xyz.elnaxho.growfarm;
 
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
@@ -74,7 +74,16 @@ public final class GrowCommand implements CommandExecutor, TabCompleter {
 
         state.setSneakGrow(id, enableBoth);
         state.setMoveGrow(id, enableBoth);
+
         player.sendMessage(enableBoth ? config.getMessageGrowBothOn() : config.getMessageGrowBothOff());
+
+        // Handle exclusive mode - only announce/disable AutoPlant if it was
+        // actually on. Otherwise this message would fire every single time
+        // AutoGrow gets turned on, regardless of AutoPlant's real state.
+        if (enableBoth && config.isExclusiveMode() && state.isAutoPlant(id)) {
+            state.setAutoPlant(id, false);
+            player.sendMessage(config.getMessageAutoPlantDisabledByAutoGrow());
+        }
         return true;
     }
 
@@ -83,8 +92,16 @@ public final class GrowCommand implements CommandExecutor, TabCompleter {
             player.sendMessage(config.getMessageNoPermission());
             return true;
         }
-        boolean enabled = state.toggleSneakGrow(player.getUniqueId());
+        UUID id = player.getUniqueId();
+        boolean enabled = state.toggleSneakGrow(id);
+        boolean moveEnabled = state.isMoveGrow(id);
+
         player.sendMessage(enabled ? config.getMessageGrowSneakOn() : config.getMessageGrowSneakOff());
+
+        if ((enabled || moveEnabled) && config.isExclusiveMode() && state.isAutoPlant(id)) {
+            state.setAutoPlant(id, false);
+            player.sendMessage(config.getMessageAutoPlantDisabledByAutoGrow());
+        }
         return true;
     }
 
@@ -93,8 +110,16 @@ public final class GrowCommand implements CommandExecutor, TabCompleter {
             player.sendMessage(config.getMessageNoPermission());
             return true;
         }
-        boolean enabled = state.toggleMoveGrow(player.getUniqueId());
+        UUID id = player.getUniqueId();
+        boolean enabled = state.toggleMoveGrow(id);
+        boolean sneakEnabled = state.isSneakGrow(id);
+
         player.sendMessage(enabled ? config.getMessageGrowMoveOn() : config.getMessageGrowMoveOff());
+
+        if ((enabled || sneakEnabled) && config.isExclusiveMode() && state.isAutoPlant(id)) {
+            state.setAutoPlant(id, false);
+            player.sendMessage(config.getMessageAutoPlantDisabledByAutoGrow());
+        }
         return true;
     }
 
@@ -110,15 +135,20 @@ public final class GrowCommand implements CommandExecutor, TabCompleter {
 
     @Override
     public List<String> onTabComplete(CommandSender sender, Command command, String alias, String[] args) {
-        if (args.length == 1) {
-            List<String> completions = new ArrayList<>();
-            for (String option : List.of("sneak", "move", "reload")) {
-                if (option.startsWith(args[0].toLowerCase())) {
-                    completions.add(option);
-                }
-            }
-            return completions;
+        if (args.length != 1) {
+            return Collections.emptyList();
         }
-        return Collections.emptyList();
+        List<String> completions = new ArrayList<>();
+        String prefix = args[0].toLowerCase();
+        if (sender.hasPermission(Permissions.COMMAND_GROW_SNEAK) && "sneak".startsWith(prefix)) {
+            completions.add("sneak");
+        }
+        if (sender.hasPermission(Permissions.COMMAND_GROW_MOVE) && "move".startsWith(prefix)) {
+            completions.add("move");
+        }
+        if (sender.hasPermission(Permissions.COMMAND_RELOAD) && "reload".startsWith(prefix)) {
+            completions.add("reload");
+        }
+        return completions;
     }
 }

@@ -1,11 +1,11 @@
-package xyz.elnaxho.sneakgrow;
+package xyz.elnaxho.growfarm;
 
 import org.bukkit.plugin.Plugin;
 
 /**
  * Isolated FastAsyncWorldEdit integration point.
  *
- * SneakGrow's block edits are small, localized, and already event-driven, so
+ * GrowFarm's block edits are small, localized, and already event-driven, so
  * there is no correctness-critical dependency on FAWE for AutoGrow/AutoPlant
  * themselves. This hook exists so:
  *   1) FAWE is a properly declared/configured dependency (see pom.xml), and

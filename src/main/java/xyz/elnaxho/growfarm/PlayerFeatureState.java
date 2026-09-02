@@ -1,5 +1,4 @@
-package xyz.elnaxho.sneakgrow;
-
+package xyz.elnaxho.growfarm;
 import java.util.Set;
 import java.util.UUID;
 import java.util.concurrent.ConcurrentHashMap;
@@ -33,6 +32,10 @@ public final class PlayerFeatureState {
 
     public void setMoveGrow(UUID id, boolean value) {
         set(moveGrowEnabled, id, value);
+    }
+
+    public void setAutoPlant(UUID id, boolean value) {
+        set(autoPlantEnabled, id, value);
     }
 
     public boolean toggleAutoPlant(UUID id) {
