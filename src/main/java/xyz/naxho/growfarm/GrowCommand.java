@@ -1,4 +1,4 @@
-package xyz.elnaxho.growfarm;
+package xyz.naxho.growfarm;
 
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;

@@ -1,4 +1,4 @@
-package xyz.elnaxho.growfarm;
+package xyz.naxho.growfarm;
 
 /**
  * Central registry of every permission node used by the plugin.

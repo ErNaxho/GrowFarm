@@ -1,4 +1,4 @@
-package xyz.elnaxho.growfarm;
+package xyz.naxho.growfarm;
 
 import net.luckperms.api.LuckPerms;
 import net.luckperms.api.LuckPermsProvider;

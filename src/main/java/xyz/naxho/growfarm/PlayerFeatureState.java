@@ -1,4 +1,4 @@
-package xyz.elnaxho.growfarm;
+package xyz.naxho.growfarm;
 import java.util.Set;
 import java.util.UUID;
 import java.util.concurrent.ConcurrentHashMap;

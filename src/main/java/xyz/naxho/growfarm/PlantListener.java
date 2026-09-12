@@ -1,4 +1,4 @@
-package xyz.elnaxho.growfarm;
+package xyz.naxho.growfarm;
 
 import org.bukkit.Location;
 import org.bukkit.Material;
